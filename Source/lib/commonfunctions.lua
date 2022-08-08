@@ -293,7 +293,6 @@ function printAllPhysicsObjects(world, BOX2D_SCALE)
 					points[i] = points[i] -- * BOX2D_SCALE
 				end
 				love.graphics.polygon("fill", points)
-print(inspect(points))
 			else
 				love.graphics.line(body:getWorldPoints(shape:getPoints()))
 				error("This physics object needs to be scaled before drawing")

@@ -16,10 +16,42 @@ SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
 SCREEN_STACK = {}
 
+function postSolve(a, b, coll, normalimpulse, tangentimpulse)
+	-- a and be are fixtures
+	local obj1, obj2
+	local body1 = a:getBody()
+	local body2 = b:getBody()
+
+	-- get a handle on the objects
+	for k, objects in pairs(PHYSICS_ENTITIES) do
+		if objects.body == body1 then
+			obj1 = objects
+		end
+		if objects.body == body2 then
+			obj2 = objects
+		end
+	end
+
+	if obj1.type == enum.physObjArrow then
+		body1:setLinearVelocity(0,0)
+	end
+	if obj2.type == enum.physObjArrow then
+		body2:setLinearVelocity(0,0)
+	end
+end
+
 function love.keyreleased( key, scancode )
 	if key == "escape" then
 		cf.RemoveScreen(SCREEN_STACK)
 	end
+end
+
+function love.mousepressed( x, y, button, istouch, presses )
+	MOUSEX = x
+	MOUSEY = y
+end
+
+function love.mousemoved( x, y, dx, dy, istouch )
 end
 
 function love.mousereleased( x, y, button, istouch, presses )
@@ -40,9 +72,23 @@ function love.mousereleased( x, y, button, istouch, presses )
 				fun.createRangeItems()
 				cf.AddScreen(enum.sceneRange, SCREEN_STACK)
 			end
+		elseif currentScreen == enum.sceneRange then
+			-- see if pulling the bow
+			local xdelta, ydelta
+			if MOUSEX ~= nil then
+				xdelta = MOUSEX - x
+			end
+			if MOUSEY ~= nil then
+				ydelta = y - MOUSEY
+			end
+			if xdelta ~= nil and xdelta ~= 0 then
+				local mousescaling = 3		-- mouse sensitivity
+				xdelta = xdelta * mousescaling
+				ydelta = ydelta * -1 * mousescaling
+				fun.launchArrow(xdelta, ydelta)
+			end
 		end
 	end
-
 end
 
 function love.load()

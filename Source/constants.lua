@@ -27,7 +27,7 @@ function constants.load()
 
     enum.physObjGround = 1
     enum.physObjTarget = 2
-
+    enum.physObjArrow = 3
 
 end
 

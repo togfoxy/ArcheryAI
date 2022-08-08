@@ -26,26 +26,46 @@ function draw.range()
     for k, obj in pairs(PHYSICS_ENTITIES) do
         if obj.type == enum.physObjGround then
     		local body = obj.body
+            local points = {}
     		for _, fixture in pairs(body:getFixtures()) do
     			local shape = fixture:getShape()
-    			local points = {body:getWorldPoints(shape:getPoints())}
+    			points = {body:getWorldPoints(shape:getPoints())}
     			for i = 1, #points do
     				points[i] = points[i] * BOX2D_SCALE
     			end
-                love.graphics.setColor(0,1,0,1)
-                love.graphics.polygon("fill", points)
+
             end
+            love.graphics.setColor(0,1,0,1)
+            love.graphics.polygon("fill", points)
         elseif obj.type == enum.physObjTarget then
             local body = obj.body
+            local points = {}
             for _, fixture in pairs(body:getFixtures()) do
                 local shape = fixture:getShape()
-                local points = {body:getWorldPoints(shape:getPoints())}
+                points = {body:getWorldPoints(shape:getPoints())}
                 for i = 1, #points do
                     points[i] = points[i] * BOX2D_SCALE
                 end
-                love.graphics.setColor(0,0,1,1)
-                love.graphics.polygon("fill", points)
             end
+            love.graphics.setColor(0,0,1,1)
+            love.graphics.polygon("fill", points)
+        elseif obj.type == enum.physObjArrow then
+            local body = obj.body
+            local points = {}
+            for _, fixture in pairs(body:getFixtures()) do
+                local shape = fixture:getShape()
+                 points = {body:getWorldPoints(shape:getPoints())}
+                for i = 1, #points do
+                    points[i] = points[i] * BOX2D_SCALE
+                end
+            end
+
+            local dx, dy = body:getLinearVelocity()
+            local compassangle = cf.getBearing(0,0,dx, dy)
+            local radangle = math.rad(compassangle)
+            body:setAngle(radangle)
+            love.graphics.setColor(1,0,1,1)
+            love.graphics.polygon("fill", points)
         end
     end
 
