@@ -290,7 +290,7 @@ function printAllPhysicsObjects(world, BOX2D_SCALE)
 			elseif shape:typeOf("PolygonShape") then
 				local points = {body:getWorldPoints(shape:getPoints())}
 				for i = 1, #points do
-					points[i] = points[i] -- * BOX2D_SCALE
+					points[i] = points[i] * BOX2D_SCALE
 				end
 				love.graphics.polygon("fill", points)
 			else

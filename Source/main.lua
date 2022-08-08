@@ -34,9 +34,25 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 
 	if obj1.type == enum.physObjArrow then
 		body1:setLinearVelocity(0,0)
+		if obj2.type == enum.physObjTarget then
+			print("Whoot!")
+		end
+		local myarrow = {}
+		-- these are physics numbers
+		myarrow.x, myarrow.y = body1:getPosition()
+		myarrow.angle = body1:getAngle()
+		table.insert(ARROWS, myarrow)
 	end
 	if obj2.type == enum.physObjArrow then
 		body2:setLinearVelocity(0,0)
+		if obj1.type == enum.physObjTarget then
+			print("Whoot!")
+		end
+		local myarrow = {}
+		-- these are physics numbers
+		myarrow.x, myarrow.y = body2:getPosition()
+		myarrow.angle = body2:getAngle()
+		table.insert(ARROWS, myarrow)
 	end
 end
 
@@ -106,6 +122,7 @@ function love.load()
 	constants.load()
 	buttons.load()
 	fun.loadFonts()
+	fun.loadImages()
 
 	cf.AddScreen(enum.sceneMainMenu, SCREEN_STACK)
 

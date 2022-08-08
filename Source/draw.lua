@@ -64,10 +64,30 @@ function draw.range()
             local compassangle = cf.getBearing(0,0,dx, dy)
             local radangle = math.rad(compassangle)
             body:setAngle(radangle)
-            love.graphics.setColor(1,0,1,1)
-            love.graphics.polygon("fill", points)
+            -- love.graphics.setColor(1,0,1,1)
+            -- love.graphics.polygon("fill", points)
+
+            local x1, y1 = body:getPosition()
+            x1 = x1 * BOX2D_SCALE
+            y1 = y1 * BOX2D_SCALE
+            love.graphics.setColor(1,1,1,1)
+            love.graphics.draw(IMAGES[enum.imagesArrow], x1, y1, radangle, 0.5, 0.5, 50, 40)
+
+
         end
     end
+
+    -- draw arrow images
+    for k, arrow in pairs(ARROWS) do
+        local drawx = arrow.x * BOX2D_SCALE
+        local drawy = arrow.y * BOX2D_SCALE
+        local radangle = arrow.angle
+
+        love.graphics.draw(IMAGES[enum.imagesArrow], drawx, drawy, radangle, 0.5, 0.5, 50, 40)
+
+    end
+
+
 
     --             love.graphics.circle("fill", obj.body:getX(), obj.body:getY(), obj.shape:getRadius())
 end

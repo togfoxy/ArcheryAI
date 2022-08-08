@@ -1,5 +1,13 @@
 functions = {}
 
+function functions.loadImages()
+
+    IMAGES[enum.imagesArrow] = love.graphics.newImage("assets/images/arrow.png")
+
+
+
+end
+
 function functions.loadFonts()
     -- FONT[enum.fontHeavyMetalLarge] = love.graphics.newFont("assets/fonts/Heavy Metal Box.ttf")
     -- FONT[enum.fontHeavyMetalSmall] = love.graphics.newFont("assets/fonts/Heavy Metal Box.ttf",10)
