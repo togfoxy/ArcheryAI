@@ -1,0 +1,15 @@
+NOTE: DO NOT CREATE A REPO IN GITHUB FIRST
+Add the parent folder to Atom (not the source folder)
+Click/highlight main.lua
+Open the GIT Sidebar
+Create repository (change drop down if necessary)
+Click INIT
+Commit any change to local repo
+Switch to GITHUB sidebar
+Click PUBLISH ON GITHUB (change drop down if necessary)
+Click PUBLISH
+Check the repo on github is okay
+
+Remove the parent folder from atom
+Add the source folder to atom
+
