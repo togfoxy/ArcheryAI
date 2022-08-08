@@ -66,7 +66,6 @@ function love.load()
 end
 
 function love.draw()
-
     res.start()
 
 	love.graphics.setColor(1,1,1,1)
@@ -76,25 +75,16 @@ function love.draw()
 	buttons.draw(currentScreen)
 
 	if currentScreen == enum.sceneRange then
-
 		draw.range()
 		-- cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
-
 	end
-
     res.stop()
 end
 
-
 function love.update(dt)
-
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
 	if currentScreen == enum.sceneRange then
 		PHYSICSWORLD:update(dt) -- this puts the world into motion
 	end
-
-
 	res.update()
-
-
 end
