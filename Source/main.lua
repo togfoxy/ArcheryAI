@@ -11,6 +11,7 @@ buttons = require 'buttons'
 constants = require 'constants'
 fun = require 'functions'
 draw = require 'draw'
+ai = require 'ai'
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -93,6 +94,10 @@ function love.keyreleased( key, scancode )
 	if key == "escape" then
 		cf.RemoveScreen(SCREEN_STACK)
 	end
+
+	if key == "a" then
+		AI_ON = not AI_ON
+	end
 end
 
 function love.mousepressed( x, y, button, istouch, presses )
@@ -111,10 +116,11 @@ function love.mousereleased( x, y, button, istouch, presses )
 	end
 
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
-	local buttonID = buttons.getButtonClicked(x, y, currentScreen, GUI_BUTTONS)		-- could return nil
+
 
 	if button == 1 then
 		if currentScreen == enum.sceneMainMenu then
+			local buttonID = buttons.getButtonClicked(x, y, currentScreen, GUI_BUTTONS)		-- could return nil
 			if buttonID == enum.buttonStart then
 				--! start game
 				fun.initialiseGame()
@@ -122,19 +128,22 @@ function love.mousereleased( x, y, button, istouch, presses )
 				cf.AddScreen(enum.sceneRange, SCREEN_STACK)
 			end
 		elseif currentScreen == enum.sceneRange then
-			-- see if pulling the bow
-			local xdelta, ydelta
-			if MOUSEX ~= nil then
-				xdelta = MOUSEX - x
-			end
-			if MOUSEY ~= nil then
-				ydelta = y - MOUSEY
-			end
-			if xdelta ~= nil and xdelta ~= 0 then
-				local mousescaling = 3		-- mouse sensitivity
-				xdelta = xdelta * mousescaling
-				ydelta = ydelta * -1 * mousescaling
-				fun.launchArrow(xdelta, ydelta)
+			if not AI_ON then
+				-- see if pulling the bow
+				local xdelta, ydelta
+				if MOUSEX ~= nil then
+					xdelta = MOUSEX - x
+				end
+				if MOUSEY ~= nil then
+					ydelta = y - MOUSEY
+				end
+				if xdelta ~= nil and xdelta ~= 0 then
+					local mousescaling = 3		-- mouse sensitivity
+					xdelta = xdelta * mousescaling
+					ydelta = ydelta * -1 * mousescaling
+					fun.launchArrow(xdelta, ydelta)
+					-- print(xdelta,ydelta)
+				end
 			end
 		end
 	end
@@ -174,7 +183,7 @@ function love.draw()
 		draw.range()
 		draw.hud()
 
-		-- cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
+		cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
 	end
     res.stop()
 end
@@ -182,7 +191,7 @@ end
 function love.update(dt)
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
 	if currentScreen == enum.sceneRange then
-		PHYSICSWORLD:update(dt) -- this puts the world into motion
+
 
 		-- update arrow timer
 		for i = #ARROWS, 1, -1 do
@@ -192,6 +201,13 @@ function love.update(dt)
 				table.remove(ARROWS, i)
 			end
 		end
+
+		-- process AI
+		if AI_ON then
+			ai.update(dt)
+		end
+
+		PHYSICSWORLD:update(dt) -- this puts the world into motion. NOTE: ensure this is last
 	end
 	res.update()
 end

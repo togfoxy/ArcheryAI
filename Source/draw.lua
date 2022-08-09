@@ -129,8 +129,14 @@ function draw.hud()
     for i = #GRAPH, 1, -1 do
         local x = drawx + i
         local y = (drawy - (GRAPH[i] * 2))
-        love.graphics.circle("fill", x, y, 3)
+        love.graphics.circle("fill", x, y, 2)
+    end
+
+    -- draw AI mode
+    if AI_ON then
+        love.graphics.print("AI active", 25, 25)
+    else
+        love.graphics.print("AI off", 25, 25)
     end
 end
-
 return draw

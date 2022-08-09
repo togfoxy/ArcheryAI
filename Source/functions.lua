@@ -74,18 +74,18 @@ function functions.launchArrow(xdelta,ydelta)
 
     local object = {}
     object.body = love.physics.newBody(PHYSICSWORLD, x, y, "dynamic")
-    -- object.shape = love.physics.newRectangleShape(width, height)        -- will put x/y in centre of rectangle
     object.shape = love.physics.newPolygonShape(points)
     object.fixture = love.physics.newFixture(object.body, object.shape)
     object.fixture:setRestitution(0)
     object.fixture:setGroupIndex( -3)
     object.type = enum.physObjArrow
+    object.xvector = xdelta
+    object.yvector = ydelta
     table.insert(PHYSICS_ENTITIES, object)
 
-    local compassangle = cf.getBearing(0,0,xdelta, ydelta)
+    local compassangle = cf.getBearing(0,0, xdelta, ydelta)
     local radangle = math.rad(compassangle)
     object.body:setAngle(radangle)
-
     object.body:applyForce(xdelta, ydelta)		-- the amount of force = vector distance
 end
 
