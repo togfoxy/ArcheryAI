@@ -4,8 +4,6 @@ function functions.loadImages()
 
     IMAGES[enum.imagesArrow] = love.graphics.newImage("assets/images/arrow.png")
 
-
-
 end
 
 function functions.loadFonts()
@@ -31,7 +29,7 @@ function functions.createRangeItems()
     -- add the ground
     local x = 49        -- centre of the box
     local y = 50
-    local width = 100
+    local width = 2000
     local height = 2
 
     local object = {}
@@ -40,6 +38,7 @@ function functions.createRangeItems()
     object.fixture = love.physics.newFixture(object.body, object.shape)
     object.fixture:setRestitution(0)
     object.fixture:setGroupIndex( -1 )
+    object.fixture:setFriction( 1 )
     object.type = enum.physObjGround
     table.insert(PHYSICS_ENTITIES, object)
 
@@ -65,6 +64,10 @@ function functions.launchArrow(xdelta,ydelta)
     -- ydelta is how far down
     -- will need to convert that to a physics delta
 
+    -- qtable requires integers so do some defensive coding here
+    xdelta = cf.round(xdelta)
+    ydelta = cf.round(ydelta)
+
     -- create the arrow
     local x = 7       -- centre of the box
     local y = 42
@@ -87,6 +90,9 @@ function functions.launchArrow(xdelta,ydelta)
     local radangle = math.rad(compassangle)
     object.body:setAngle(radangle)
     object.body:applyForce(xdelta, ydelta)		-- the amount of force = vector distance
+    ARROW_COUNT = ARROW_COUNT + 1
+
+    -- print(xdelta, ydelta)
 end
 
 function functions.killPhysObject(mybody)

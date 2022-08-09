@@ -6,6 +6,12 @@ inspect = require 'lib.inspect'
 res = require 'lib.resolution_solution'
 -- https://github.com/Vovkiv/resolution_solution
 
+bitser = require 'lib.bitser'
+-- https://github.com/gvx/bitser
+
+nativefs = require 'lib.nativefs'
+-- https://github.com/megagrump/nativefs
+
 cf = require 'lib.commonfunctions'
 buttons = require 'buttons'
 constants = require 'constants'
@@ -54,6 +60,9 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 			table.insert(RESULTS, distance)
 			if #RESULTS > 100 then table.remove(RESULTS, 1) end
 
+			ai.updateQTable(obj1, distance)
+
+			-- create an arrow image
 			local myarrow = {}
 			-- these are physics numbers
 			myarrow.x, myarrow.y = body1:getPosition()
@@ -77,6 +86,9 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 			table.insert(RESULTS, distance)
 			if #RESULTS > 100 then table.remove(RESULTS, 1) end
 
+			ai.updateQTable(obj2, distance)
+
+			-- create an arrow image
 			local myarrow = {}
 			-- these are physics numbers
 			myarrow.x, myarrow.y = body2:getPosition()
@@ -86,18 +98,25 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 			fun.killPhysObject(body2)
 		end
 	else
-		print("Detected a nil body")
+		-- print("Detected a nil body")
 	end
 end
 
 function love.keyreleased( key, scancode )
 	if key == "escape" then
 		cf.RemoveScreen(SCREEN_STACK)
+		local currentScreen = cf.currentScreenName(SCREEN_STACK)
+		if currentScreen == enum.sceneMainMenu then
+			ai.saveQTable()
+		end
 	end
-
 	if key == "a" then
 		AI_ON = not AI_ON
 	end
+	if key == "e" then
+		AI_EXPLOIT_ON = not AI_EXPLOIT_ON
+	end
+
 end
 
 function love.mousepressed( x, y, button, istouch, presses )
@@ -125,6 +144,7 @@ function love.mousereleased( x, y, button, istouch, presses )
 				--! start game
 				fun.initialiseGame()
 				fun.createRangeItems()
+				ai.loadQTable()
 				cf.AddScreen(enum.sceneRange, SCREEN_STACK)
 			end
 		elseif currentScreen == enum.sceneRange then
@@ -165,6 +185,7 @@ function love.load()
 	buttons.load()
 	fun.loadFonts()
 	fun.loadImages()
+	ai.initialiseQTable()
 
 	cf.AddScreen(enum.sceneMainMenu, SCREEN_STACK)
 
@@ -183,7 +204,7 @@ function love.draw()
 		draw.range()
 		draw.hud()
 
-		cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
+		-- cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
 	end
     res.stop()
 end

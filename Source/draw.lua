@@ -100,7 +100,7 @@ function draw.hud()
     local min = max - 10    -- min could be a negative number so fix in next line
     local min = math.max(min, 0)
     love.graphics.setColor(1,1,1,1)
-    local drawx = SCREEN_WIDTH - 100
+    local drawx = SCREEN_WIDTH - 75
     local drawy = 50
     for i = max, min, -1 do
         if RESULTS[i] ~= nil then
@@ -131,12 +131,31 @@ function draw.hud()
         local y = (drawy - (GRAPH[i] * 2))
         love.graphics.circle("fill", x, y, 2)
     end
+    -- draw the 'random' benchmark line
+    local drawx1 = drawx        -- from above
+    local drawy1 = drawy - 30   -- from above
+    local drawx2 = drawx1 + 100
+    local drawy2 = drawy1
+    love.graphics.setColor(0, 1, 1, 0.75)
+    love.graphics.line(drawx1, drawy1, drawx2, drawy2)
+    -- print the average
+    local avg = "Average: " .. (GRAPH[#GRAPH] or 0)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print(avg, drawx, drawy + 20)
+    love.graphics.print("Arrows launched: " .. ARROW_COUNT, drawx, drawy + 40 )
 
     -- draw AI mode
+    love.graphics.setColor(1, 1, 1, 1)
     if AI_ON then
-        love.graphics.print("AI active", 25, 25)
+        love.graphics.print("AI active", 25, 20)
     else
-        love.graphics.print("AI off", 25, 25)
+        love.graphics.print("AI off", 25, 20)
+    end
+    -- draw exploit mode
+    if AI_EXPLOIT_ON then
+        love.graphics.print("AI is learning", 25, 40)
+    else
+        love.graphics.print("AI is random", 25, 40)
     end
 end
 return draw

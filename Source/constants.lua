@@ -9,14 +9,18 @@ function constants.load()
     ARROWS = {}
     RESULTS = {}
     GRAPH = {}
+    QTABLE = {}
 
     BOX2D_SCALE = 20
     ARROW_TIMER = 30        -- seconds before destruction. NOT used on phys object. Used on image.
 
     AI_ON = false
+    AI_EXPLOIT_ON = false
 
-    AI_SHOOT_TIMER_DEFAULT = 2      -- seconds between shots
+    AI_SHOOT_TIMER_DEFAULT = 0.25      -- seconds between shots
     AI_SHOOT_TIMER = AI_SHOOT_TIMER_DEFAULT
+
+    ARROW_COUNT = 0                     -- how many arrows launched
 
     enum = {}
     enum.sceneMainMenu = 1
