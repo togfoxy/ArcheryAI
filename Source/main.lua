@@ -6,11 +6,18 @@ inspect = require 'lib.inspect'
 res = require 'lib.resolution_solution'
 -- https://github.com/Vovkiv/resolution_solution
 
+bitser = require 'lib.bitser'
+-- https://github.com/gvx/bitser
+
+nativefs = require 'lib.nativefs'
+-- https://github.com/megagrump/nativefs
+
 cf = require 'lib.commonfunctions'
 buttons = require 'buttons'
 constants = require 'constants'
 fun = require 'functions'
 draw = require 'draw'
+ai = require 'ai'
 
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -22,44 +29,94 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 	local body1 = a:getBody()
 	local body2 = b:getBody()
 
+	local target
+
 	-- get a handle on the objects
-	for k, objects in pairs(PHYSICS_ENTITIES) do
-		if objects.body == body1 then
-			obj1 = objects
+	for k, object in pairs(PHYSICS_ENTITIES) do
+		if object.body == body1 then
+			obj1 = object
 		end
-		if objects.body == body2 then
-			obj2 = objects
+		if object.body == body2 then
+			obj2 = object
+		end
+		if object.type == enum.physObjTarget then
+			target = object		-- this is NOT the body.
 		end
 	end
 
-	if obj1.type == enum.physObjArrow then
-		body1:setLinearVelocity(0,0)
-		if obj2.type == enum.physObjTarget then
-			print("Whoot!")
+	if obj1 ~= nil and obj2 ~= nil then
+		if obj1.type == enum.physObjArrow then
+			body1:setLinearVelocity(0,0)
+			if obj2.type == enum.physObjTarget then
+				print("Whoot!")
+			end
+
+			-- capture the score (distance to target)
+			local targetx, targety = target.body:getPosition()
+			local arrowx, arrowy = obj1.body:getPosition()
+			local distance = cf.GetDistance(arrowx, arrowy, targetx, targety)			-- physics meters
+			distance = cf.round(distance, 1)
+			-- print(distance)
+			table.insert(RESULTS, distance)
+			if #RESULTS > 100 then table.remove(RESULTS, 1) end
+
+			ai.updateQTable(obj1, distance)
+
+			-- create an arrow image
+			local myarrow = {}
+			-- these are physics numbers
+			myarrow.x, myarrow.y = body1:getPosition()
+			myarrow.angle = body1:getAngle()
+			myarrow.timer = ARROW_TIMER
+			table.insert(ARROWS, myarrow)
+			fun.killPhysObject(body1)
 		end
-		local myarrow = {}
-		-- these are physics numbers
-		myarrow.x, myarrow.y = body1:getPosition()
-		myarrow.angle = body1:getAngle()
-		table.insert(ARROWS, myarrow)
-	end
-	if obj2.type == enum.physObjArrow then
-		body2:setLinearVelocity(0,0)
-		if obj1.type == enum.physObjTarget then
-			print("Whoot!")
+		if obj2.type == enum.physObjArrow then
+			body2:setLinearVelocity(0,0)
+			if obj1.type == enum.physObjTarget then
+				print("Whoot!")
+			end
+
+			-- capture the score (distance to target)
+			local targetx, targety = target.body:getPosition()
+			local arrowx, arrowy = obj2.body:getPosition()
+			local distance = cf.GetDistance(arrowx, arrowy, targetx, targety)			-- physics meters
+			distance = cf.round(distance, 1)
+			-- print(distance)
+			table.insert(RESULTS, distance)
+			if #RESULTS > 100 then table.remove(RESULTS, 1) end
+
+			ai.updateQTable(obj2, distance)
+
+			-- create an arrow image
+			local myarrow = {}
+			-- these are physics numbers
+			myarrow.x, myarrow.y = body2:getPosition()
+			myarrow.angle = body2:getAngle()
+			myarrow.timer = ARROW_TIMER
+			table.insert(ARROWS, myarrow)
+			fun.killPhysObject(body2)
 		end
-		local myarrow = {}
-		-- these are physics numbers
-		myarrow.x, myarrow.y = body2:getPosition()
-		myarrow.angle = body2:getAngle()
-		table.insert(ARROWS, myarrow)
+	else
+		-- print("Detected a nil body")
 	end
 end
 
 function love.keyreleased( key, scancode )
 	if key == "escape" then
 		cf.RemoveScreen(SCREEN_STACK)
+		local currentScreen = cf.currentScreenName(SCREEN_STACK)
+		if currentScreen == enum.sceneMainMenu then
+			ai.saveQTable()
+		end
 	end
+	if key == "a" then
+		AI_ON = not AI_ON
+	end
+	if key == "e" then
+		AI_EXPLOIT_ON = not AI_EXPLOIT_ON
+	end
+
 end
 
 function love.mousepressed( x, y, button, istouch, presses )
@@ -78,30 +135,35 @@ function love.mousereleased( x, y, button, istouch, presses )
 	end
 
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
-	local buttonID = buttons.getButtonClicked(x, y, currentScreen, GUI_BUTTONS)		-- could return nil
+
 
 	if button == 1 then
 		if currentScreen == enum.sceneMainMenu then
+			local buttonID = buttons.getButtonClicked(x, y, currentScreen, GUI_BUTTONS)		-- could return nil
 			if buttonID == enum.buttonStart then
 				--! start game
 				fun.initialiseGame()
 				fun.createRangeItems()
+				ai.loadQTable()
 				cf.AddScreen(enum.sceneRange, SCREEN_STACK)
 			end
 		elseif currentScreen == enum.sceneRange then
-			-- see if pulling the bow
-			local xdelta, ydelta
-			if MOUSEX ~= nil then
-				xdelta = MOUSEX - x
-			end
-			if MOUSEY ~= nil then
-				ydelta = y - MOUSEY
-			end
-			if xdelta ~= nil and xdelta ~= 0 then
-				local mousescaling = 3		-- mouse sensitivity
-				xdelta = xdelta * mousescaling
-				ydelta = ydelta * -1 * mousescaling
-				fun.launchArrow(xdelta, ydelta)
+			if not AI_ON then
+				-- see if pulling the bow
+				local xdelta, ydelta
+				if MOUSEX ~= nil then
+					xdelta = MOUSEX - x
+				end
+				if MOUSEY ~= nil then
+					ydelta = y - MOUSEY
+				end
+				if xdelta ~= nil and xdelta ~= 0 then
+					local mousescaling = 3		-- mouse sensitivity
+					xdelta = xdelta * mousescaling
+					ydelta = ydelta * -1 * mousescaling
+					fun.launchArrow(xdelta, ydelta)
+					-- print(xdelta,ydelta)
+				end
 			end
 		end
 	end
@@ -123,6 +185,7 @@ function love.load()
 	buttons.load()
 	fun.loadFonts()
 	fun.loadImages()
+	ai.initialiseQTable()
 
 	cf.AddScreen(enum.sceneMainMenu, SCREEN_STACK)
 
@@ -139,6 +202,8 @@ function love.draw()
 
 	if currentScreen == enum.sceneRange then
 		draw.range()
+		draw.hud()
+
 		-- cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
 	end
     res.stop()
@@ -147,7 +212,23 @@ end
 function love.update(dt)
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
 	if currentScreen == enum.sceneRange then
-		PHYSICSWORLD:update(dt) -- this puts the world into motion
+
+
+		-- update arrow timer
+		for i = #ARROWS, 1, -1 do
+			ARROWS[i].timer = ARROWS[i].timer - dt
+			if ARROWS[i].timer <= 0 then
+				-- delete it
+				table.remove(ARROWS, i)
+			end
+		end
+
+		-- process AI
+		if AI_ON then
+			ai.update(dt)
+		end
+
+		PHYSICSWORLD:update(dt) -- this puts the world into motion. NOTE: ensure this is last
 	end
 	res.update()
 end
