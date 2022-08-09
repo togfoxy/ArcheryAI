@@ -13,8 +13,12 @@ function ai.updateQTable(arrow, distance)
     -- update Q Table
 
     -- QTable structure: QTABLE[y][x] = delta y , delta x
-    local xvector = arrow.xvector
-    local yvector = arrow.yvector
+    local xvector = arrow.xvector / QTABLE_RESOLUTION
+    local yvector = arrow.yvector / QTABLE_RESOLUTION
+
+    xvector = cf.round(xvector)
+    yvector = cf.round(yvector)
+
     if QTABLE[yvector] == nil then
         QTABLE[yvector] = {}
         QTABLE[yvector][xvector] = {}
@@ -43,6 +47,9 @@ function ai.getXVector(yvector)
 
     local xvector
 
+    yvector = yvector / QTABLE_RESOLUTION
+    yvector = cf.round(yvector)
+
     if not AI_EXPLOIT_ON then
         -- random
         xvector = love.math.random(200, 2000)
@@ -70,8 +77,8 @@ function ai.getXVector(yvector)
                         bestxvector = k
                     end
                 end
-                print("best xvector is: " .. bestxvector .. ". Estimated distance is: " .. bestscore)
-                xvector = bestxvector
+                -- print("best xvector is: " .. bestxvector .. ". Estimated distance is: " .. bestscore)
+                xvector = bestxvector * QTABLE_RESOLUTION
             end
         end
     end
