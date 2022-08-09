@@ -25,11 +25,13 @@ function ai.updateQTable(arrow, distance)
         QTABLE[yvector][xvector].score = 0
         QTABLE[yvector][xvector].count = 0
         QTABLE[yvector][xvector].avg = 0
+        TIME_SINCE_LEARN = 0
     elseif QTABLE[yvector][xvector] == nil then
         QTABLE[yvector][xvector] = {}
         QTABLE[yvector][xvector].score = 0
         QTABLE[yvector][xvector].count = 0
         QTABLE[yvector][xvector].avg = 0
+        TIME_SINCE_LEARN = 0
     end
 
     QTABLE[yvector][xvector].score = QTABLE[yvector][xvector].score + distance
@@ -56,8 +58,8 @@ function ai.getXVector(yvector)
     else
         -- AI can use Q Table
         -- explore or exploit?
-        if love.math.random(1, 100) <= 10 then
-            -- explore
+        if AI_LEARN_ON and love.math.random(1, 100) <= 10 then
+            -- do random
             xvector = love.math.random(200, 2000)
         else
             -- exploit
@@ -77,8 +79,18 @@ function ai.getXVector(yvector)
                         bestxvector = k
                     end
                 end
-                -- print("best xvector is: " .. bestxvector .. ". Estimated distance is: " .. bestscore)
-                xvector = bestxvector * QTABLE_RESOLUTION
+                if bestscore > 28 then
+                    -- this is not a viable solution.
+                    if AI_LEARN_ON then
+                        -- switch to explore
+                        xvector = love.math.random(200, 2000)
+                    else
+                        -- don't take the shot
+                    end
+                else
+                    -- winner
+                    xvector = bestxvector * QTABLE_RESOLUTION
+                end
             end
         end
     end
@@ -97,7 +109,9 @@ function ai.update(dt)
         local ydelta = love.math.random(10, -1000)
         local xdelta = ai.getXVector(ydelta)            -- provide the x and get back the y
 
-        fun.launchArrow(xdelta, ydelta)
+        if xdelta ~= nil then
+            fun.launchArrow(xdelta, ydelta)
+        end
     end
 end
 

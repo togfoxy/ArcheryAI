@@ -48,7 +48,7 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 		if obj1.type == enum.physObjArrow then
 			body1:setLinearVelocity(0,0)
 			if obj2.type == enum.physObjTarget then
-				print("Whoot!")
+				-- print("Whoot!")
 			end
 
 			-- capture the score (distance to target)
@@ -74,7 +74,7 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 		if obj2.type == enum.physObjArrow then
 			body2:setLinearVelocity(0,0)
 			if obj1.type == enum.physObjTarget then
-				print("Whoot!")
+				-- print("Whoot!")
 			end
 
 			-- capture the score (distance to target)
@@ -113,10 +113,15 @@ function love.keyreleased( key, scancode )
 	if key == "a" then
 		AI_ON = not AI_ON
 	end
-	if key == "e" then
-		AI_EXPLOIT_ON = not AI_EXPLOIT_ON
+	if key == "r" then
+		AI_EXPLOIT_ON = not AI_EXPLOIT_ON	-- exploit off = always explore
 	end
-
+	if key == "e" then
+		AI_LEARN_ON = not AI_LEARN_ON		-- learn = explore.
+	end
+	if key == "w" then
+		fun.createWall()
+	end
 end
 
 function love.mousepressed( x, y, button, istouch, presses )
@@ -227,6 +232,8 @@ function love.update(dt)
 		if AI_ON then
 			ai.update(dt)
 		end
+
+		TIME_SINCE_LEARN = TIME_SINCE_LEARN + dt
 
 		PHYSICSWORLD:update(dt) -- this puts the world into motion. NOTE: ensure this is last
 	end

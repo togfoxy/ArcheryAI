@@ -72,6 +72,18 @@ function draw.range()
             y1 = y1 * BOX2D_SCALE
             love.graphics.setColor(1,1,1,1)
             love.graphics.draw(IMAGES[enum.imagesArrow], x1, y1, radangle, 0.5, 0.5, 50, 40)
+        elseif obj.type == enum.physObjWall then
+            local body = obj.body
+            local points = {}
+            for _, fixture in pairs(body:getFixtures()) do
+                local shape = fixture:getShape()
+                points = {body:getWorldPoints(shape:getPoints())}
+                for i = 1, #points do
+                    points[i] = points[i] * BOX2D_SCALE
+                end
+            end
+            love.graphics.setColor(1,1,0,1)
+            love.graphics.polygon("fill", points)
         end
     end
 
@@ -143,6 +155,10 @@ function draw.hud()
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(avg, drawx, drawy + 20)
     love.graphics.print("Arrows launched: " .. ARROW_COUNT, drawx, drawy + 40 )
+    -- time since learned
+    local txt = "Time since learning: " .. cf.round(TIME_SINCE_LEARN, 1)
+    love.graphics.setColor(1,1,1,1)
+    love.graphics.print(txt, drawx, drawy + 60)
 
     -- draw AI mode
     love.graphics.setColor(1, 1, 1, 1)
@@ -153,9 +169,16 @@ function draw.hud()
     end
     -- draw exploit mode
     if AI_EXPLOIT_ON then
-        love.graphics.print("AI is learning", 25, 40)
+        love.graphics.print("AI is not random", 25, 40)
     else
         love.graphics.print("AI is random", 25, 40)
     end
+    -- draw the learn mode
+    if AI_LEARN_ON then
+        love.graphics.print("AI is learning", 25, 60)
+    else
+        love.graphics.print("AI has learnt", 25, 60)
+    end
+
 end
 return draw
