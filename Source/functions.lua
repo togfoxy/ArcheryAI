@@ -39,6 +39,7 @@ function functions.createRangeItems()
     object.shape = love.physics.newRectangleShape(width, height)        -- will put x/y in centre of rectangle
     object.fixture = love.physics.newFixture(object.body, object.shape)
     object.fixture:setRestitution(0)
+    object.fixture:setGroupIndex( -1 )
     object.type = enum.physObjGround
     table.insert(PHYSICS_ENTITIES, object)
 
@@ -54,6 +55,7 @@ function functions.createRangeItems()
     object.shape = love.physics.newRectangleShape(0, 0, width, height, cf.convCompassToRad(angle))        -- will put x/y in centre of rectangle
     object.fixture = love.physics.newFixture(object.body, object.shape)
     object.fixture:setRestitution(0)
+    object.fixture:setGroupIndex( -2)
     object.type = enum.physObjTarget
     table.insert(PHYSICS_ENTITIES, object)
 end
@@ -76,6 +78,7 @@ function functions.launchArrow(xdelta,ydelta)
     object.shape = love.physics.newPolygonShape(points)
     object.fixture = love.physics.newFixture(object.body, object.shape)
     object.fixture:setRestitution(0)
+    object.fixture:setGroupIndex( -3)
     object.type = enum.physObjArrow
     table.insert(PHYSICS_ENTITIES, object)
 
@@ -85,4 +88,18 @@ function functions.launchArrow(xdelta,ydelta)
 
     object.body:applyForce(xdelta, ydelta)		-- the amount of force = vector distance
 end
+
+function functions.killPhysObject(mybody)
+    -- receives a body and kills it
+
+    for i = 1, #PHYSICS_ENTITIES do
+        if PHYSICS_ENTITIES[i].body == mybody then
+            -- kill
+            PHYSICS_ENTITIES[i].body:destroy()
+            table.remove(PHYSICS_ENTITIES, i)
+            break
+        end
+    end
+end
+
 return functions

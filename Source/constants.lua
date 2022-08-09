@@ -7,8 +7,11 @@ function constants.load()
     PHYSOBJECTS = {}
     IMAGES = {}
     ARROWS = {}
+    RESULTS = {}
+    GRAPH = {}
 
     BOX2D_SCALE = 20
+    ARROW_TIMER = 30        -- seconds before destruction. NOT used on phys object. Used on image.
 
 
     enum = {}

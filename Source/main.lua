@@ -22,37 +22,70 @@ function postSolve(a, b, coll, normalimpulse, tangentimpulse)
 	local body1 = a:getBody()
 	local body2 = b:getBody()
 
+	local target
+
 	-- get a handle on the objects
-	for k, objects in pairs(PHYSICS_ENTITIES) do
-		if objects.body == body1 then
-			obj1 = objects
+	for k, object in pairs(PHYSICS_ENTITIES) do
+		if object.body == body1 then
+			obj1 = object
 		end
-		if objects.body == body2 then
-			obj2 = objects
+		if object.body == body2 then
+			obj2 = object
+		end
+		if object.type == enum.physObjTarget then
+			target = object		-- this is NOT the body.
 		end
 	end
 
-	if obj1.type == enum.physObjArrow then
-		body1:setLinearVelocity(0,0)
-		if obj2.type == enum.physObjTarget then
-			print("Whoot!")
+	if obj1 ~= nil and obj2 ~= nil then
+		if obj1.type == enum.physObjArrow then
+			body1:setLinearVelocity(0,0)
+			if obj2.type == enum.physObjTarget then
+				print("Whoot!")
+			end
+
+			-- capture the score (distance to target)
+			local targetx, targety = target.body:getPosition()
+			local arrowx, arrowy = obj1.body:getPosition()
+			local distance = cf.GetDistance(arrowx, arrowy, targetx, targety)			-- physics meters
+			distance = cf.round(distance, 1)
+			-- print(distance)
+			table.insert(RESULTS, distance)
+			if #RESULTS > 100 then table.remove(RESULTS, 1) end
+
+			local myarrow = {}
+			-- these are physics numbers
+			myarrow.x, myarrow.y = body1:getPosition()
+			myarrow.angle = body1:getAngle()
+			myarrow.timer = ARROW_TIMER
+			table.insert(ARROWS, myarrow)
+			fun.killPhysObject(body1)
 		end
-		local myarrow = {}
-		-- these are physics numbers
-		myarrow.x, myarrow.y = body1:getPosition()
-		myarrow.angle = body1:getAngle()
-		table.insert(ARROWS, myarrow)
-	end
-	if obj2.type == enum.physObjArrow then
-		body2:setLinearVelocity(0,0)
-		if obj1.type == enum.physObjTarget then
-			print("Whoot!")
+		if obj2.type == enum.physObjArrow then
+			body2:setLinearVelocity(0,0)
+			if obj1.type == enum.physObjTarget then
+				print("Whoot!")
+			end
+
+			-- capture the score (distance to target)
+			local targetx, targety = target.body:getPosition()
+			local arrowx, arrowy = obj2.body:getPosition()
+			local distance = cf.GetDistance(arrowx, arrowy, targetx, targety)			-- physics meters
+			distance = cf.round(distance, 1)
+			-- print(distance)
+			table.insert(RESULTS, distance)
+			if #RESULTS > 100 then table.remove(RESULTS, 1) end
+
+			local myarrow = {}
+			-- these are physics numbers
+			myarrow.x, myarrow.y = body2:getPosition()
+			myarrow.angle = body2:getAngle()
+			myarrow.timer = ARROW_TIMER
+			table.insert(ARROWS, myarrow)
+			fun.killPhysObject(body2)
 		end
-		local myarrow = {}
-		-- these are physics numbers
-		myarrow.x, myarrow.y = body2:getPosition()
-		myarrow.angle = body2:getAngle()
-		table.insert(ARROWS, myarrow)
+	else
+		print("Detected a nil body")
 	end
 end
 
@@ -139,6 +172,8 @@ function love.draw()
 
 	if currentScreen == enum.sceneRange then
 		draw.range()
+		draw.hud()
+
 		-- cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
 	end
     res.stop()
@@ -148,6 +183,15 @@ function love.update(dt)
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
 	if currentScreen == enum.sceneRange then
 		PHYSICSWORLD:update(dt) -- this puts the world into motion
+
+		-- update arrow timer
+		for i = #ARROWS, 1, -1 do
+			ARROWS[i].timer = ARROWS[i].timer - dt
+			if ARROWS[i].timer <= 0 then
+				-- delete it
+				table.remove(ARROWS, i)
+			end
+		end
 	end
 	res.update()
 end
