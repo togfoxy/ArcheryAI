@@ -213,16 +213,19 @@ function draw.graph()
                 else
                     -- print(i, j, BIG_GRAPH[i][j])
 
-                    -- scale the values for graphing purposes
+                    -- scale the vector back to normal 1:1 scale
+                    local yvector = i * QTABLE_RESOLUTION
+                    local xvector = j * QTABLE_RESOLUTION
+
+                    local graphscale = 4
+                    yvector = yvector / graphscale
+                    xvector = xvector / graphscale
 
                     -- inverted graph
-                    local drawy = originx - (i * (QTABLE_RESOLUTION / 5))
-                    local drawx = originy - (j * (QTABLE_RESOLUTION / 5))         -- larger numbers bring the dots closer to the origin
+                    local drawx = originx + (xvector)         -- larger numbers bring the dots closer to the origin
+                    local drawy = originy + (yvector)
 
-                    -- print(originx, originy)
-                    -- print(j, i, drawy, drawx)
-
-                    love.graphics.circle("fill", drawy, drawx, 1)
+                    love.graphics.circle("fill", drawx, drawy, 1)
 
                     -- error()
                 end
