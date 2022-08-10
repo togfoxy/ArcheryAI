@@ -38,8 +38,19 @@ function ai.updateQTable(arrow, distance)
     QTABLE[yvector][xvector].count = QTABLE[yvector][xvector].count + 1
     QTABLE[yvector][xvector].avg = cf.round(QTABLE[yvector][xvector].score / QTABLE[yvector][xvector].count, 1)
 
-    -- print("*******************************")
-    -- print(inspect(QTABLE))
+    -- update the big graph if AI has found a good solution
+    if BIG_GRAPH[yvector] == nil then
+        BIG_GRAPH[yvector] = {}
+    end
+    if BIG_GRAPH[yvector][xvector] == nil then
+        BIG_GRAPH[yvector][xvector] = {}
+    end
+
+    if QTABLE[yvector][xvector].avg <= 1 then
+        BIG_GRAPH[yvector][xvector] = QTABLE[yvector][xvector].avg
+    end
+
+
 
 end
 

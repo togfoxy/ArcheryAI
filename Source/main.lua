@@ -122,6 +122,9 @@ function love.keyreleased( key, scancode )
 	if key == "w" then
 		fun.createWall()
 	end
+	if key == "g" then
+		GRAPH_ON = not GRAPH_ON
+	end
 end
 
 function love.mousepressed( x, y, button, istouch, presses )
@@ -167,7 +170,6 @@ function love.mousereleased( x, y, button, istouch, presses )
 					xdelta = xdelta * mousescaling
 					ydelta = ydelta * -1 * mousescaling
 					fun.launchArrow(xdelta, ydelta)
-					-- print(xdelta,ydelta)
 				end
 			end
 		end
@@ -208,7 +210,9 @@ function love.draw()
 	if currentScreen == enum.sceneRange then
 		draw.range()
 		draw.hud()
-
+		if GRAPH_ON then
+			draw.graph()
+		end
 		-- cf.printAllPhysicsObjects(PHYSICSWORLD, BOX2D_SCALE)
 	end
     res.stop()

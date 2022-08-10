@@ -97,9 +97,6 @@ function draw.range()
         love.graphics.draw(IMAGES[enum.imagesArrow], drawx, drawy, radangle, 0.5, 0.5, 50, 40)
 
     end
-
-
-
     -- love.graphics.circle("fill", obj.body:getX(), obj.body:getY(), obj.shape:getRadius())
 end
 
@@ -180,5 +177,72 @@ function draw.hud()
         love.graphics.print("AI has learnt", 25, 60)
     end
 
+    -- draw fidelity
+    love.graphics.print("Learning fidelity: " .. QTABLE_RESOLUTION, 125, 20)
+
 end
+
+function draw.graph()
+    -- draw the qtable on the screen
+
+    local boxborder = 150
+    love.graphics.setColor(0,0,0,1)
+    love.graphics.rectangle("fill", boxborder, boxborder, SCREEN_WIDTH - (boxborder * 2), SCREEN_HEIGHT - (boxborder * 2))
+
+    -- origin is bottom left corner
+    local originx = boxborder + 50
+    local originy = boxborder + SCREEN_HEIGHT - (boxborder * 2) - 50
+    love.graphics.setColor(1,1,1,1)
+    love.graphics.circle("fill", originx, originy, 5)
+
+    -- these are maximum vectors permissible when exploring
+    -- i is the y vector which is negative
+    local imin = -1000
+    local imax = 10
+    -- j is the x vector which is positive
+    local jmin = 0
+    local jmax = 2000
+
+    for i = imin, imax do
+        if BIG_GRAPH[i] == nil then
+            -- skip
+        else
+            for j = jmin, jmax do
+                if BIG_GRAPH[i][j] == nil then
+                    -- skip
+                else
+                    -- print(i, j, BIG_GRAPH[i][j])
+
+                    -- scale the values for graphing purposes
+
+                    -- inverted graph
+                    local drawy = originx - (i * 2)
+                    local drawx = originy - (j * 2)         -- larger numbers bring the dots closer to the origin
+
+                    -- print(originx, originy)
+                    -- print(j, i, drawy, drawx)
+
+                    love.graphics.circle("fill", drawy, drawx, 1)
+
+                    -- error()
+                end
+            end
+        end
+    end
+
+    -- draw axis
+    local x1 = originx
+    local y1 = originy
+    local x2 = originx + 700
+    local y2 = y1
+    love.graphics.line(x1, y1, x2, y2)
+
+    local x1 = originx
+    local y1 = originy
+    local x2 = x1
+    local y2 = originy - 500
+    love.graphics.line(x1, y1, x2, y2)
+
+end
+
 return draw
