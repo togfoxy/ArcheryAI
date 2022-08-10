@@ -14,7 +14,7 @@ function constants.load()
 
     BOX2D_SCALE = 20
     ARROW_TIMER = 30        -- seconds before destruction. NOT used on phys object. Used on image.
-    QTABLE_RESOLUTION = 10     -- how large is the state space. 1 means no shrinkage of state space (slow learning). 1000 = fast learning.
+    QTABLE_RESOLUTION = 75     -- how large is the state space. 1 means no shrinkage of state space (slow learning). 1000 = fast learning.
     TIME_SINCE_LEARN = 0        -- duration since it last learnt something
 
     AI_ON = false

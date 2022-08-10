@@ -125,6 +125,9 @@ function love.keyreleased( key, scancode )
 	if key == "g" then
 		GRAPH_ON = not GRAPH_ON
 	end
+	if key == "x" then
+		QTABLE = {}
+	end
 end
 
 function love.mousepressed( x, y, button, istouch, presses )

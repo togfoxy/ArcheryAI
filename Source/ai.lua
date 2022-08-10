@@ -49,9 +49,6 @@ function ai.updateQTable(arrow, distance)
     if QTABLE[yvector][xvector].avg <= 1 then
         BIG_GRAPH[yvector][xvector] = QTABLE[yvector][xvector].avg
     end
-
-
-
 end
 
 function ai.getXVector(yvector)
@@ -90,7 +87,7 @@ function ai.getXVector(yvector)
                         bestxvector = k
                     end
                 end
-                if bestscore > 28 then
+                if bestscore > 10 then
                     -- this is not a viable solution.
                     if AI_LEARN_ON then
                         -- switch to explore

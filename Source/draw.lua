@@ -216,8 +216,8 @@ function draw.graph()
                     -- scale the values for graphing purposes
 
                     -- inverted graph
-                    local drawy = originx - (i * 2)
-                    local drawx = originy - (j * 2)         -- larger numbers bring the dots closer to the origin
+                    local drawy = originx - (i * (QTABLE_RESOLUTION / 5))
+                    local drawx = originy - (j * (QTABLE_RESOLUTION / 5))         -- larger numbers bring the dots closer to the origin
 
                     -- print(originx, originy)
                     -- print(j, i, drawy, drawx)
