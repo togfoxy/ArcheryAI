@@ -59,6 +59,26 @@ function functions.createRangeItems()
     table.insert(PHYSICS_ENTITIES, object)
 end
 
+function functions.createWall()
+
+    -- add a vertical wall
+    local x = 43        -- centre of the box
+    local y = 42
+    local width = 1
+    local height = 15
+
+    local object = {}
+    object.body = love.physics.newBody(PHYSICSWORLD, x, y, "static")
+    object.shape = love.physics.newRectangleShape(width, height)        -- will put x/y in centre of rectangle
+    object.fixture = love.physics.newFixture(object.body, object.shape)
+    object.fixture:setRestitution(0)
+    object.fixture:setGroupIndex( -1 )
+    object.fixture:setFriction( 1 )
+    object.type = enum.physObjWall
+    table.insert(PHYSICS_ENTITIES, object)
+
+end
+
 function functions.launchArrow(xdelta,ydelta)
     -- xdelta is how far left
     -- ydelta is how far down

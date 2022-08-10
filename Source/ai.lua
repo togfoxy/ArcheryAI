@@ -13,28 +13,42 @@ function ai.updateQTable(arrow, distance)
     -- update Q Table
 
     -- QTable structure: QTABLE[y][x] = delta y , delta x
-    local xvector = arrow.xvector
-    local yvector = arrow.yvector
+    local xvector = arrow.xvector / QTABLE_RESOLUTION
+    local yvector = arrow.yvector / QTABLE_RESOLUTION
+
+    xvector = cf.round(xvector)
+    yvector = cf.round(yvector)
+
     if QTABLE[yvector] == nil then
         QTABLE[yvector] = {}
         QTABLE[yvector][xvector] = {}
         QTABLE[yvector][xvector].score = 0
         QTABLE[yvector][xvector].count = 0
         QTABLE[yvector][xvector].avg = 0
+        TIME_SINCE_LEARN = 0
     elseif QTABLE[yvector][xvector] == nil then
         QTABLE[yvector][xvector] = {}
         QTABLE[yvector][xvector].score = 0
         QTABLE[yvector][xvector].count = 0
         QTABLE[yvector][xvector].avg = 0
+        TIME_SINCE_LEARN = 0
     end
 
     QTABLE[yvector][xvector].score = QTABLE[yvector][xvector].score + distance
     QTABLE[yvector][xvector].count = QTABLE[yvector][xvector].count + 1
     QTABLE[yvector][xvector].avg = cf.round(QTABLE[yvector][xvector].score / QTABLE[yvector][xvector].count, 1)
 
-    -- print("*******************************")
-    -- print(inspect(QTABLE))
+    -- update the big graph if AI has found a good solution
+    if BIG_GRAPH[yvector] == nil then
+        BIG_GRAPH[yvector] = {}
+    end
+    if BIG_GRAPH[yvector][xvector] == nil then
+        BIG_GRAPH[yvector][xvector] = {}
+    end
 
+    if QTABLE[yvector][xvector].avg <= 1 then
+        BIG_GRAPH[yvector][xvector] = QTABLE[yvector][xvector].avg
+    end
 end
 
 function ai.getXVector(yvector)
@@ -43,14 +57,17 @@ function ai.getXVector(yvector)
 
     local xvector
 
+    yvector = yvector / QTABLE_RESOLUTION
+    yvector = cf.round(yvector)
+
     if not AI_EXPLOIT_ON then
         -- random
         xvector = love.math.random(200, 2000)
     else
         -- AI can use Q Table
         -- explore or exploit?
-        if love.math.random(1, 100) <= 10 then
-            -- explore
+        if AI_LEARN_ON and love.math.random(1, 100) <= 10 then
+            -- do random
             xvector = love.math.random(200, 2000)
         else
             -- exploit
@@ -70,8 +87,18 @@ function ai.getXVector(yvector)
                         bestxvector = k
                     end
                 end
-                print("best xvector is: " .. bestxvector .. ". Estimated distance is: " .. bestscore)
-                xvector = bestxvector
+                if bestscore > 10 then
+                    -- this is not a viable solution.
+                    if AI_LEARN_ON then
+                        -- switch to explore
+                        xvector = love.math.random(200, 2000)
+                    else
+                        -- don't take the shot
+                    end
+                else
+                    -- winner
+                    xvector = bestxvector * QTABLE_RESOLUTION
+                end
             end
         end
     end
@@ -90,7 +117,9 @@ function ai.update(dt)
         local ydelta = love.math.random(10, -1000)
         local xdelta = ai.getXVector(ydelta)            -- provide the x and get back the y
 
-        fun.launchArrow(xdelta, ydelta)
+        if xdelta ~= nil then
+            fun.launchArrow(xdelta, ydelta)
+        end
     end
 end
 

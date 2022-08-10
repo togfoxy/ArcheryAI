@@ -10,12 +10,17 @@ function constants.load()
     RESULTS = {}
     GRAPH = {}
     QTABLE = {}
+    BIG_GRAPH = {}          -- this is be big graph
 
     BOX2D_SCALE = 20
     ARROW_TIMER = 30        -- seconds before destruction. NOT used on phys object. Used on image.
+    QTABLE_RESOLUTION = 75     -- how large is the state space. 1 means no shrinkage of state space (slow learning). 1000 = fast learning.
+    TIME_SINCE_LEARN = 0        -- duration since it last learnt something
 
     AI_ON = false
     AI_EXPLOIT_ON = false
+    AI_LEARN_ON = true         -- true means it will explore and learn
+    GRAPH_ON = false            -- draw the Qtable graph full screen
 
     AI_SHOOT_TIMER_DEFAULT = 0.25      -- seconds between shots
     AI_SHOOT_TIMER = AI_SHOOT_TIMER_DEFAULT
@@ -33,6 +38,7 @@ function constants.load()
     enum.physObjGround = 1
     enum.physObjTarget = 2
     enum.physObjArrow = 3
+    enum.physObjWall = 4
 
     enum.imagesArrow = 1
 
