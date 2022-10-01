@@ -56,7 +56,6 @@ function buttons.getButtonClicked(mx, my, scene, buttontable)
         if button.scene == scene then
         	if mx >= button.x and mx <= button.x + button.width and
         		my >= button.y and my <= button.y + button.height then
-
                 return button.identifier
         	end
         end
