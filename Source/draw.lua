@@ -160,23 +160,23 @@ function draw.hud()
     -- draw AI mode
     love.graphics.setColor(1, 1, 1, 1)
     if AI_ON then
-        love.graphics.print("AI active", 25, 20)
+        love.graphics.print("(a) AI active", 25, 20)
     else
-        love.graphics.print("AI off", 25, 20)
+        love.graphics.print("(a) AI off", 25, 20)
     end
     -- draw exploit mode
     if AI_EXPLOIT_ON then
-        love.graphics.print("AI is not random", 25, 40)
+        love.graphics.print("(r) AI is not random", 25, 40)
     else
-        love.graphics.print("AI is random", 25, 40)
+        love.graphics.print("(r) AI is random", 25, 40)
     end
     -- draw the learn mode
     if AI_LEARN_ON then
-        love.graphics.print("AI is learning", 25, 60)
+        love.graphics.print("(e) AI is learning", 25, 60)
     else
-        love.graphics.print("AI has learnt", 25, 60)
+        love.graphics.print("(e) AI has learnt", 25, 60)
     end
-
+    love.graphics.print("(w) Add wall", 25, 80)
     -- draw fidelity
     love.graphics.print("Learning fidelity: " .. QTABLE_RESOLUTION, 125, 20)
 
@@ -213,16 +213,19 @@ function draw.graph()
                 else
                     -- print(i, j, BIG_GRAPH[i][j])
 
-                    -- scale the values for graphing purposes
+                    -- scale the vector back to normal 1:1 scale
+                    local yvector = i * QTABLE_RESOLUTION
+                    local xvector = j * QTABLE_RESOLUTION
+
+                    local graphscale = 4
+                    yvector = yvector / graphscale
+                    xvector = xvector / graphscale
 
                     -- inverted graph
-                    local drawy = originx - (i * (QTABLE_RESOLUTION / 5))
-                    local drawx = originy - (j * (QTABLE_RESOLUTION / 5))         -- larger numbers bring the dots closer to the origin
+                    local drawx = originx + (xvector)         -- larger numbers bring the dots closer to the origin
+                    local drawy = originy + (yvector)
 
-                    -- print(originx, originy)
-                    -- print(j, i, drawy, drawx)
-
-                    love.graphics.circle("fill", drawy, drawx, 1)
+                    love.graphics.circle("fill", drawx, drawy, 1)
 
                     -- error()
                 end

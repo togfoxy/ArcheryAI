@@ -1,0 +1,53 @@
+
+Explain my programming background, my interest in LUA and machine learning
+
+Decided to make an archery project
+
+Describe archer and target
+
+Do manual shots
+
+Explain metrics
+
+Turn on AI (a)
+
+Explain it is learning in what is an infinate state
+
+Show the metrics as it explores and learns
+
+Go to 200 arrows
+
+Explain exploit and turn it on (r)
+
+Show how it is more on target. Show the metrics
+
+Explain it is doing mostly exploiting and some exploring
+
+Remind ppl it is still an infinate state
+
+Take a note of the metrics
+
+Go to 450 arrows
+
+Now it has learned, lets see how well (e)
+
+Some go behind the target and some fall short but the vast majority are on target.
+
+Go to 650
+
+Explain how I really wanted to test with a wall (w) (e - learning)
+
+After 1000 arrows - turn off explore (e)
+
+
+Summary
+- started with an infinate state with angle and strength
+- random actions was not impressive but it provided some learnings
+- deliberate exploitation with a bit of exploration gave great learnings
+- forcing an unexpected event (the wall) forced new learnings
+
+
+
+
+
+
