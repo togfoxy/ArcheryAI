@@ -146,17 +146,20 @@ function love.mousereleased( x, y, button, istouch, presses )
 	end
 
 	local currentScreen = cf.currentScreenName(SCREEN_STACK)
-
+	
+	local rx, ry = res.toGame(x, y)
 
 	if button == 1 then
 		if currentScreen == enum.sceneMainMenu then
-			local buttonID = buttons.getButtonClicked(x, y, currentScreen, GUI_BUTTONS)		-- could return nil
+			local buttonID = buttons.getButtonClicked(rx, ry, currentScreen, GUI_BUTTONS)		-- could return nil
 			if buttonID == enum.buttonStart then
 				--! start game
 				fun.initialiseGame()
 				fun.createRangeItems()
 				ai.loadQTable()
 				cf.AddScreen(enum.sceneRange, SCREEN_STACK)
+			else
+				
 			end
 		elseif currentScreen == enum.sceneRange then
 			if not AI_ON then
